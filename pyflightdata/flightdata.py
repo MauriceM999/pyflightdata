@@ -26,7 +26,7 @@ from .utils import *
 from .common import FlightMixin
 from .common_fr24 import (AIRLINE_BASE, AIRLINE_FLT_BASE, AIRPORT_BASE,
                           AIRPORT_DATA_BASE, AIRPORT_DATA_BASE_EARLIER, FLT_BASE, FR24, LOGIN_URL,
-                          REG_BASE, ROOT, AIRLINE_FLT_BASE_POINTS, AIRLINE_FLEET_BASE)
+                          REG_BASE, ROOT, AIRLINE_FLT_BASE_POINTS, AIRLINE_FLEET_BASE, FLIGHT_PLAYBACK_BASE)
 from jsonpath_rw import parse
 
 class FlightData(FlightMixin):
@@ -733,3 +733,27 @@ class FlightData(FlightMixin):
         """
         self._fr24.timestamp=""
         self._fr24.last_key=""
+
+
+    def get_flight_track(self, flightId):
+        """Retrieve the track of the flight
+
+        Given the flightId, this method returns the tracked positions and corresponding timestamps of the flight.
+
+        Args:
+            flightId (str): The flightId of the flight
+
+        Returns:
+            A list of dicts with the data
+
+        Example::
+
+            from pyflightdata import FlightData
+            f=FlightData()
+            #optional login
+            f.login(myemail,mypassword)
+            f.get_flight_track('2a16b779')
+
+        """
+        url = FLIGHT_PLAYBACK_BASE.format(flightId)
+        return self._fr24.get_flight_track(url)

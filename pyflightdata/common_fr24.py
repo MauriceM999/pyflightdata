@@ -35,11 +35,12 @@ AIRLINE_FLT_BASE = 'https://www.flightradar24.com/v1/search/web/find?query={0}&l
 AIRLINE_FLT_BASE_POINTS = 'https://api.flightradar24.com/common/v1/search.json?query=default&origin={0}&destination={1}'
 IMAGE_BASE = 'https://www.flightradar24.com/aircrafts/images/?aircraft={0}'
 LOGIN_URL = 'https://www.flightradar24.com/user/login'
+FLIGHT_PLAYBACK_BASE = 'https://api.flightradar24.com/common/v1/flight-playback.json?flightId={0}'
 
 
 class FR24(ProcessorMixin):
 
-    FILTER_JSON_KEYS = ['hex', 'id', 'logo', 'row', 'icon']
+    FILTER_JSON_KEYS = ['hex', 'logo', 'row', 'icon'] # 'id' should not be removed - it contains the flightId
 
     timestamp = ""
     last_key = ""
@@ -283,3 +284,8 @@ class FR24(ProcessorMixin):
         if self.last_key != key:
             self.timestamp = ""
         self.last_key = key
+
+    def get_flight_track(self, url):
+        data = self.get_raw_data_json(
+            url, 'result.response.data.flight.track')
+        return self.filter_and_get_data(data) or []
